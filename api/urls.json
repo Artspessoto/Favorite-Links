@@ -1,0 +1,20 @@
+{
+  "urls": [
+    {
+      "name": "Linkedin",
+      "url": "https://www.linkedin.com/in/arthur-martins-lopes-spessoto-5bb6a2198/"
+    },
+    {
+      "name": "Discord",
+      "url": "http://www.discord.com"
+    },
+    {
+      "name": "Google",
+      "url": "http://www.google.com"
+    },
+    {
+      "name": "Meu GitHub",
+      "url": "https://github.com/Artspessoto"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "favorite_links",
+  "version": "1.0.0",
+  "description": "Aprendendo a consumir API usando o Nodejs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "dev": "nodemon api/index.js"
+  },
+  "keywords": [],
+  "author": "@Artspessoto",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
