@@ -37,7 +37,7 @@ function removeElement(el) {
   if (confirm("Tem certeza que deseja deletar?")) el.parentNode.remove();
 }
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   let { value } = input;
@@ -53,4 +53,22 @@ form.addEventListener("submit", (event) => {
   addElement({ name, url });
 
   input.value = "";
+
+  await fetch("http://127.0.0.1:5000/",
+    {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: name, url: url })
+    })
+    .then((result) => result.json())
+    .catch((err) => {
+      console.log(err);
+    });
+  
 });
+
+
+

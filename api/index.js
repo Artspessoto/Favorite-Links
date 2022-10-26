@@ -1,56 +1,56 @@
+//arquivos e módulos
+const express = require("express");
+const data = require("./urls.json");
+const URL = require("url");
+const { handleFile } = require("./createFile.js");
+
 //servidor e porta
-const http = require("http");
+const app = express();
 const port = 5000;
 const hostname = "127.0.0.1";
 
-//arquivos e módulos
-const data = require("./urls.json");
-const URL = require("url");
-const path = require("path");
-const fs = require("fs");
-
-function writeFile(callback) {
-  fs.writeFile(
-    path.join(__dirname, "urls.json"), //caminho do diretório
-    JSON.stringify(data, null, 2), //os dados
-    (err) => {
-      //callback
-      if (err) throw err;
-
-      callback(JSON.stringify({ message: "ok" }));
-    }
-  );
-}
-
-/**
- * res = É sempre a resposta que o servidor vai enviar
- * req = é a requisição, pedido que fazemos ao servidor
- */
-const server = http.createServer((req, res) => {
-  const { name, url, del } = URL.parse(req.url, true).query;
-
-
+app.use(express.json(), (req, res, next)=>{
   //permitindo que a aplicação pode ser acessada de qualquer lugar
   res.writeHead(200, {
-    'Access-Control-Allow-Origin': '*'
-  })
+    "Access-Control-Allow-Origin": "*",
+  });
+  next();
+
+});
+
+app.post("/", (req, res) => {
+  const { name, url } = req.body;
+
+  const favorites = {
+    name,
+    url,
+  };
+
+  data.urls.push(favorites);
+  handleFile(data.urls);
+
+  res.status(200).json({message: "favorito cadastrado com sucesso!"});
+});
+
+app.get("/", (req, res) => {
+  const { name, url } = URL.parse(req.url, true).query;
 
   //all resources (listagem)
   if (!name || !url) return res.end(JSON.stringify(data));
 
-  //delete
-  if (del) {
-    data.urls = data.urls.filter((item) => String(item.url) !== String(url));
-    //o writeFile vai reescrever o arquivo e esse método tem 3 parâmetros
-    return writeFile((message) => res.end(message));
-  }
-
-  //create
-  data.urls.push({ name, url });
-
-  return writeFile((message) => res.end(message));
+  return res.json(data.urls);
 });
 
-server.listen(port, hostname, () =>
+app.delete("/remove/:name", (req, res) => {
+  const { name } = req.body;
+  const linkName = data.urls.findIndex((link) => link.name === name);
+
+  data.urls.splice(linkName, 1);
+
+  return res.json({ message: "Link removido com sucesso!" });
+});
+
+app.listen(port, hostname, () =>
   console.log(`Server running at http://${hostname}:${port}/`)
 );
+

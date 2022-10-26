@@ -1,0 +1,18 @@
+#REST Client
+
+#Inserção de novo link no arquivo json
+POST http://127.0.0.1:5000/
+Content-Type: application/json
+
+{
+    "name": "teste",
+    "url": "http://www.google.com/coisas"
+}
+
+### listagem
+GET http://127.0.0.1:5000/
+
+
+### delete
+DELETE http://127.0.0.1:5000/remove/
+Content-Type: application/json
