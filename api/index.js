@@ -2,21 +2,18 @@
 const express = require("express");
 const data = require("./urls.json");
 const URL = require("url");
-const { handleFile } = require("./createFile.js");
+const handleFile = require("./utils/handleFile");
+const cors = require('cors');
 
 //servidor e porta
 const app = express();
 const port = 5000;
 const hostname = "127.0.0.1";
 
-app.use(express.json(), (req, res, next)=>{
-  //permitindo que a aplicação pode ser acessada de qualquer lugar
-  res.writeHead(200, {
-    "Access-Control-Allow-Origin": "*",
-  });
-  next();
+app.use(express.json());
 
-});
+//permitindo que a aplicação pode ser acessada de qualquer lugar
+app.use(cors({origin: ['http://127.0.0.1:3000', 'http://localhost:3001']}));
 
 app.post("/", (req, res) => {
   const { name, url } = req.body;
@@ -27,7 +24,7 @@ app.post("/", (req, res) => {
   };
 
   data.urls.push(favorites);
-  handleFile(data.urls);
+  handleFile(data);
 
   res.status(200).json({message: "favorito cadastrado com sucesso!"});
 });
@@ -42,10 +39,12 @@ app.get("/", (req, res) => {
 });
 
 app.delete("/remove/:name", (req, res) => {
-  const { name } = req.body;
+  const { name } = req.params.name;
   const linkName = data.urls.findIndex((link) => link.name === name);
-
+  
   data.urls.splice(linkName, 1);
+
+  handleFile(data);
 
   return res.json({ message: "Link removido com sucesso!" });
 });
