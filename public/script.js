@@ -9,8 +9,6 @@ async function loadApi() {
       console.log(err);
     });
 
-  console.log(data);
-
   data.urls.map(({ name, url }) => addElement({ name, url }));
 }
 
@@ -34,7 +32,23 @@ function addElement({ name, url }) {
 }
 
 function removeElement(el) {
-  if (confirm("Tem certeza que deseja deletar?")) el.parentNode.remove();
+  if (confirm("Tem certeza que deseja deletar?")) {
+    fetch("http://127.0.0.1:5000/remove/"+ el.parentNode.firstChild.innerText, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (result) => {
+        const data = await result.json();
+        alert(data.message);
+        el.parentNode.remove();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
 
 form.addEventListener("submit", async (event) => {
@@ -46,7 +60,8 @@ form.addEventListener("submit", async (event) => {
 
   const [name, url] = value.split(",");
 
-  if (!url) return alert("formate o texto da maneira correta(sem espaçamentos)");
+  if (!url)
+    return alert("formate o texto da maneira correta(sem espaçamentos)");
 
   if (!/^http/.test(url)) return alert("Digite a url da maneira correta");
 
@@ -54,21 +69,16 @@ form.addEventListener("submit", async (event) => {
 
   input.value = "";
 
-  await fetch("http://127.0.0.1:5000/",
-    {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: name, url: url })
-    })
+  await fetch("http://127.0.0.1:5000/", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name: name, url: url }),
+  })
     .then((result) => result.json())
     .catch((err) => {
       console.log(err);
     });
-  
 });
-
-
-
